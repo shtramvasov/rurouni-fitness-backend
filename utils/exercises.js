@@ -17,4 +17,17 @@ function assignExerciseHistory(exercise, exercisesHistory) {
   exercise.current_weight = exercisesHistory.at(0).weight;
 }
 
-module.exports = { assignExerciseHistory }
+function mapMuscleGroup(muscle_group) {
+  const muscleGroupMap = {
+    biceps:        'Бицепс',
+    triceps:       'Трицепс',
+    shoulders:    'Плечи',
+    chest:        'Грудь',
+    legs:         'Ноги',
+    back:         'Спина'
+  };
+
+  return muscleGroupMap[muscle_group.toLowerCase()] || null
+}
+
+module.exports = { assignExerciseHistory, mapMuscleGroup }

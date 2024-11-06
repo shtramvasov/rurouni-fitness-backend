@@ -1,16 +1,23 @@
 const { PAGINATION } = require("../../utils");
+const { mapMuscleGroup } = require("../../utils/exercises");
 
 class ExercisesController {
 
-  static async getExercises(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, search }) {
+  static async getExercises(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, search, order }) {
     try {
       let params = [limit, offset]
       let sql = `select * from exercises`
 
       if(search) {
-        sql += ` where lower(name) like $3 or lower(muscle_group) like $3`
         params.push(`%${search.toLowerCase()}%`)
+        sql += ` where lower(name) like $${params.length} or lower(muscle_group) like $${params.length}`
       }
+
+      if(order) {
+        params.push(mapMuscleGroup(order).toLowerCase())
+        sql += ` order by case when lower(muscle_group) = $${params.length} THEN 0 ELSE 1 END, muscle_group`
+      }
+
       sql += ` limit $1 offset $2 `
 
       const result = await connection.query(sql, params);
