@@ -13,12 +13,12 @@ class UsersController {
     }
   }
 
-  static async postUser(connection, { username, password, email }) {
+  static async postUser(connection, { username, password, email, display_name = null }) {
     try {
       const user = await connection.query(`
-        insert into users (username, password, email, created_on_tz) values ($1, $2, $3, now())
-        returning user_id, username`,
-        [username, password, email]
+        insert into users (username, password, email, display_name, created_on_tz) values ($1, $2, $3, $4, now())
+        returning user_id, username, display_name`,
+        [username, password, email, display_name]
       );
 
       return user.rows[0]
