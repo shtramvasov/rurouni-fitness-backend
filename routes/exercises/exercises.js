@@ -7,9 +7,11 @@ const { assignExerciseHistory } = require('../../utils');
 // Получить список упражнений
 router.get('/', connection (async (req, res) => {
   const { limit, offset, search, order } = req.query;
+  const { user_id } = req.user;
   const connection = res.locals.pg;
 
-  const exercisesList = await ExercisesController.getExercises(connection, { limit, offset, search, order });
+
+  const exercisesList = await ExercisesController.getExercises(connection, { limit, offset, search, order }, user_id);
 
   res.json(exercisesList)
 }));

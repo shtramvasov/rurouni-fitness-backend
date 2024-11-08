@@ -3,19 +3,31 @@ const { mapMuscleGroup } = require("../../utils/exercises");
 
 class ExercisesController {
 
-  static async getExercises(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, search, order }) {
+  static async getExercises(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, search, order }, user_id) {
     try {
-      let params = [limit, offset]
-      let sql = `select * from exercises`
+      let params = [limit, offset, user_id]
+      let sql = `
+        select 
+          e.*,
+          (
+            select max(w.created_on_tz)
+            from workout_exercises we
+              left join workouts w on w.workout_id = we.workout_id
+            where we.exercise_id = e.exercise_id and w.user_id = $3
+          ) created_on_tz
+        from exercises e
+      `;
 
       if(search) {
         params.push(`%${search.toLowerCase()}%`)
-        sql += ` where lower(name) like $${params.length} or lower(muscle_group) like $${params.length}`
+        sql += ` where lower(e.name) like $${params.length} or lower(e.muscle_group) like $${params.length}`
       }
 
       if(order) {
         params.push(mapMuscleGroup(order).toLowerCase())
-        sql += ` order by case when lower(muscle_group) = $${params.length} THEN 0 ELSE 1 END, muscle_group`
+        sql += ` order by case when lower(e.muscle_group) = $${params.length} THEN 0 ELSE 1 END, created_on_tz NULLS LAST`
+      } else {
+        sql += ` order by created_on_tz nulls last`
       }
 
       sql += ` limit $1 offset $2 `
