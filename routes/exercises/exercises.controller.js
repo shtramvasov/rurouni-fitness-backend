@@ -53,6 +53,38 @@ class ExercisesController {
     }
   }
 
+  static async getMuscleGroupUsedCount(connection, { date_start_tz, date_end_tz }, user_id) {
+    try {
+      let params = [user_id]
+      let sql = `
+        select 
+	          e.muscle_group          as muscle_group,
+	          count(we.exercise_id)   as count
+        from workout_exercises we 
+	          left join workouts w on w.workout_id = we.workout_id
+	          left join exercises e on e.exercise_id = we.exercise_id
+        where w.user_id = $1 `;
+
+      if(date_start_tz) {
+        params.push(date_start_tz)
+        sql += ` and w.created_on_tz >= $${params.length} `
+      }
+
+      if(date_end_tz) {
+        params.push(date_end_tz)
+        sql += ` and w.created_on_tz <= $${params.length} `
+      }
+
+      sql += `group by e.muscle_group`
+
+      const result = await connection.query(sql, params);
+      
+      return result.rows;
+    } catch (error) {
+        throw error;
+    }
+  }
+
   static async getExerciseHistory(connection, { exercise_id, user_id }) {
     try {
       const result = await connection.query(`

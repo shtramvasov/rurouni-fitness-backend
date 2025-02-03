@@ -2,12 +2,25 @@ const { PAGINATION } = require("../../utils");
 
 class WorkoutsController {
 
-  static async getWorkouts(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, user_id }) {
+  static async getWorkouts(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, user_id, date_start_tz, date_end_tz }) {
     try {
-      const result = await connection.query(
-        `select * from workouts where user_id = $3 limit $1 offset $2`,
-        [limit, offset, user_id]
-      );
+      let params = [limit, offset, user_id]
+
+      let sql = `select * from workouts where user_id = $3 `;
+
+      if(date_start_tz) {
+        params.push(date_start_tz)
+        sql += ` and created_on_tz >= $${params.length}`
+      }
+
+      if(date_end_tz) {
+        params.push(date_end_tz)
+        sql += ` and created_on_tz <= $${params.length}`
+      }
+
+      sql += ` limit $1 offset $2`
+
+      const result = await connection.query(sql, params);
 
       return result.rows
     } catch (error) {

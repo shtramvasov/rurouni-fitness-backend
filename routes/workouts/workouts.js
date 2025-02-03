@@ -5,11 +5,11 @@ const WorkoutsController = require('./workouts.controller');
 
 // Получить список тренировок
 router.get('/', connection (async (req, res) => {
-  const { limit, offset } = req.query;
+  const { limit, offset, date_start_tz, date_end_tz } = req.query;
   const { user_id } = req.user;
   const connection = res.locals.pg;
 
-  const workoutsList = await WorkoutsController.getWorkouts(connection, { limit, offset, user_id });
+  const workoutsList = await WorkoutsController.getWorkouts(connection, { limit, offset, date_start_tz, date_end_tz, user_id });
 
   res.json(workoutsList);
 }));

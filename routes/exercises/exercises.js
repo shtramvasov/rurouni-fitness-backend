@@ -16,6 +16,20 @@ router.get('/', connection (async (req, res) => {
   res.json(exercisesList)
 }));
 
+// Получить статистику cколько упражнений на группу мышц было проведено за месяц
+router.get('/stat_by_muscle_group', connection (async (req, res) => {
+  const { date_start_tz, date_end_tz } = req.query;
+  const { user_id } = req.user;
+  const connection = res.locals.pg;
+
+  if (!date_start_tz || !date_end_tz) return res.status(404).json({ message: 'Дата обязательна к указанию' });
+
+
+  const muscleGroupStatistics = await ExercisesController.getMuscleGroupUsedCount(connection, { date_start_tz, date_end_tz }, user_id);
+
+  res.json(muscleGroupStatistics)
+}));
+
 // Получить детализацию упражнения
 router.get('/:exercise_id', connection (async (req, res) => {
   const { exercise_id } = req.params
