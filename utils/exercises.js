@@ -11,10 +11,10 @@ function assignExerciseHistory(exercise, exercisesHistory) {
 
   exercise.total_calories += Number(exercise.calories_per_rep) * (Number(workout.reps) * Number(workout.sets));
   
-  if(workout.weight > exercise.personal_record) exercise.personal_record = workout.weight
+  if(Number(workout.weight) > Number(exercise.personal_record || 0)) exercise.personal_record = Number(workout.weight)
   };
 
-  exercise.current_weight = exercisesHistory.at(0).weight;
+  exercise.current_weight = Number(exercisesHistory.at(0).weight);
 }
 
 function mapMuscleGroup(muscle_group) {
