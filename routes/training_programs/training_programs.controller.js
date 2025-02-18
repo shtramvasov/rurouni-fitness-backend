@@ -9,7 +9,7 @@ class TrainingProgramsController {
           tp.program_id,
           tp."name",
           tp.description,
-          --tp.is_active,
+          tp.is_active,
           json_agg(
             json_build_object(
               'exercise_id', e.exercise_id,
@@ -17,13 +17,24 @@ class TrainingProgramsController {
               'reps', pe.reps,
               'name', e."name",
               'muscle_group', e.muscle_group,
-              'unit', e.unit
+              'unit', e.unit,
+              'recent_sets', recent.sets,
+              'recent_reps', recent.reps,
+              'recent_weight', recent.weight,
+              'recent_created_on_tz', recent.created_on_tz
             )
           ) as exercises
         from training_programs tp
           left join program_exercises pe on pe.program_id = tp.program_id
           left join exercises e on e.exercise_id = pe.exercise_id
-        where user_id = $3
+          left join lateral (
+            select * from workout_exercises we 
+            join workouts w on w.workout_id = we.workout_id
+            where we.exercise_id = e.exercise_id and w.user_id = $3
+            order by w.created_on_tz desc
+            limit 1
+          ) as recent on true
+        where tp.user_id = $3
         group by tp.program_id
         order by tp.program_id
         limit $1 offset $2`,
