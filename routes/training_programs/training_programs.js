@@ -5,13 +5,12 @@ const TrainingProgramsController = require('./training_programs.controller');
 
 // Получить список программ тренировок
 router.get('/', connection (async (req, res) => {
-  const { limit, offset } = req.query;
+  const { limit, offset, is_active } = req.query;
   const { user_id } = req.user;
 
   const connection = res.locals.pg;
   
-
-  const trainingProgramsList = await TrainingProgramsController.getTrainingPrograms(connection, { limit, offset, user_id });
+  const trainingProgramsList = await TrainingProgramsController.getTrainingPrograms(connection, { limit, offset, user_id, is_active });
 
   res.json(trainingProgramsList);
 }));
