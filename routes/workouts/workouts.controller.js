@@ -18,7 +18,7 @@ class WorkoutsController {
         sql += ` and created_on_tz <= $${params.length}`
       }
 
-      sql += ` limit $1 offset $2`
+      sql += ` order by created_on_tz desc limit $1 offset $2`
 
       const result = await connection.query(sql, params);
 
@@ -36,7 +36,10 @@ class WorkoutsController {
           json_agg(
             json_build_object(
               'workout_exercise_id', we.workout_exercise_id,
+              'exercise_name', e.name,
               'exercise_id', we.exercise_id,
+              'muscle_group', e.muscle_group,
+              'unit', e.unit,
               'sets', we."sets",
               'reps', we.reps,
               'weight', we.weight
@@ -44,6 +47,7 @@ class WorkoutsController {
           ) as exercises
         from workouts w
           left join workout_exercises we on we.workout_id = w.workout_id
+          left join exercises e on e.exercise_id = we.exercise_id
         where w.workout_id = $1 and w.user_id = $2
         group by w.workout_id
         order by w.workout_id`,
