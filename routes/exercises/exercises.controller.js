@@ -12,7 +12,7 @@ class ExercisesController {
           (
             select max(w.created_on_tz)
             from workout_exercises we
-              left join workouts w on w.workout_id = we.workout_id
+              join workouts w on w.workout_id = we.workout_id
             where we.exercise_id = e.exercise_id and w.user_id = $3
           ) created_on_tz
         from exercises e
@@ -25,9 +25,9 @@ class ExercisesController {
 
       if(order) {
         params.push(mapMuscleGroup(order).toLowerCase())
-        sql += ` order by case when lower(e.muscle_group) = $${params.length} THEN 0 ELSE 1 END, created_on_tz NULLS LAST`
+        sql += ` order by case when lower(e.muscle_group) = $${params.length} THEN 0 ELSE 1 END, created_on_tz desc nulls last`
       } else {
-        sql += ` order by created_on_tz nulls last`
+        sql += ` order by created_on_tz desc nulls last`
       }
 
       sql += ` limit $1 offset $2 `
