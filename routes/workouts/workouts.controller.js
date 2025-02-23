@@ -60,6 +60,42 @@ class WorkoutsController {
     }
   }
 
+  static async postWorkout(connection, { title, created_on_tz, exercises, user_id }) {
+    try {
+
+      // Записываем тренировку в журнал
+      const { workout_id } = (await connection.query(
+        `insert into workouts (user_id, title, created_on_tz) values($1, $2, coalesce($3, now())) returning workout_id`,
+        [user_id, title, created_on_tz || null]
+      )).rows[0];
+
+      // Добавляем упражнения к тренировке
+      if (exercises && exercises.length > 0) {
+        let params = [workout_id]
+        let entries = [];
+        let sql = `insert into workout_exercises (workout_id, exercise_id, weight, sets, reps) values `
+
+        for(const exercise of exercises) {
+          const { exercse_id, weight, sets, reps } = exercise;
+
+          entries.push(` ($1, $${params.length + 1}, $${params.length + 2}, $${params.length + 3}, $${params.length + 4}) `)
+          params.push(exercse_id, weight, sets, reps)
+        }
+
+        sql += entries.join(', ')
+
+        // Сохраняем в БД
+        await connection.query(sql, params);
+      }
+
+      
+      return { ok: true, workout_id: workout_id };
+
+    } catch (error) {
+        throw error;
+    }
+  }
+
 }
 
 module.exports = WorkoutsController;
