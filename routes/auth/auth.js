@@ -52,6 +52,13 @@ router.post('/register', transaction (async (req, res) => {
 	});
 }));
 
+router.post('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.json({ logout: true });
+  });
+});
+
 router.get('/status', connection (async (req, res) => {
   if(req.isAuthenticated()) {  
     const { user_id, username, email, created_on_tz, last_login_on_tz, gender, avatar_url, display_name } = req.user;
