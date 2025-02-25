@@ -56,6 +56,37 @@ class TrainingProgramsController {
     }
   }
 
+  static async postTrainingProgram(connection, { user_id }) {
+    try {
+
+      const trainingProgramm = (await connection.query(`
+        insert into training_programs (user_id, name, description, is_active, created_on_tz) values (
+          $1, 
+          'Начальная программа тренировок', 
+          'Рекомендованные упражнения для новичка',
+          true,
+          now()
+        ) returning *`, [user_id]
+      )).rows[0];
+
+      await connection.query(`
+        insert into program_exercises (program_id, exercise_id, sets, reps) 
+        values 
+          ($1, 'bench-press', 3, 8),
+          ($1, 'pulldown', 3, 8),
+          ($1, 'squat', 3, 8),
+          ($1, 'tricep-cable', 3, 10),
+          ($1, 'bicep-dumbbell', 3, 10),
+          ($1, 'lateral-raises-dumbbell', 3, 10)`
+        , [trainingProgramm.program_id]
+      );     
+
+      return true;
+    } catch (error) {
+        throw error;
+    }
+  }
+
 }
 
 module.exports = TrainingProgramsController;

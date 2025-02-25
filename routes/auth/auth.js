@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const passport = require('../../middlewares/passport-strategy');
 const { connection, transaction } = require('../../middlewares/connection');
 const UsersController = require('../users/users.controller');
+const TrainingProgramsController = require('../training_programs/training_programs.controller');
 
 
 router.post('/login', transaction (async (req, res, next) => {
@@ -46,10 +47,18 @@ router.post('/register', transaction (async (req, res) => {
 
   const user = await UsersController.postUser(connection, { username, password: passwordHash, email, display_name });
 
-  res.json({
-    isAuth: true,
-		user: { user_id: user.user_id, username: user.username, display_name: user.display_name.trim() ? display_name : undefined },
-	});
+  // #TODO: убрать после добавления фичи: Программы тренировок, пока что заполнять пресетом
+  await TrainingProgramsController.postTrainingProgram(connection, { user_id: user.user_id }) 
+
+  // После регистрации сразу логиним пользователя
+  req.login(user, (err) => {
+    if (err) return res.status(500).json({ message: 'Ошибка аутентификации после регистрации' });
+
+    res.json({
+      user: { user_id: req.user.user_id, username: req.user.username, display_name: user.display_name },
+      isAuth: true,
+    });
+  });
 }));
 
 router.post('/logout', (req, res) => {
