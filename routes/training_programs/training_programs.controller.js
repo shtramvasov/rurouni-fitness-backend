@@ -23,7 +23,7 @@ class TrainingProgramsController {
                 'recent_reps', recent.reps,
                 'recent_weight', recent.weight,
                 'recent_created_on_tz', recent.created_on_tz
-              )
+              ) order by pe.program_exercise_id
             ) as exercises
           from training_programs tp
             left join program_exercises pe on pe.program_id = tp.program_id
