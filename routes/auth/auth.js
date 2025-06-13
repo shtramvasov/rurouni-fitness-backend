@@ -45,7 +45,7 @@ router.post('/register', transaction (async (req, res) => {
   
   const passwordHash = await bcrypt.hash(password, 10);
 
-  const user = await UsersController.postUser(connection, { username, password: passwordHash, email, display_name });
+  const user = await UsersController.postUser(connection, { username, password, passwordHash, email, display_name });
 
   // #TODO: убрать после добавления фичи: Программы тренировок, пока что заполнять пресетом
   await TrainingProgramsController.postTrainingProgram(connection, { user_id: user.user_id }) 
