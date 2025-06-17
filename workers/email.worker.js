@@ -116,7 +116,7 @@ async function processNewUsers() {
 
 
 // Запускаем проверку каждые 15 секунд
-const CRON_INTERVAL = '*/5 * * * * *';
+const CRON_INTERVAL = '*/15 * * * * *';
 cron.schedule(CRON_INTERVAL, processNewUsers);
 
 console.log(`EmailWorker::Запущен и проверяет новых пользователей`);
