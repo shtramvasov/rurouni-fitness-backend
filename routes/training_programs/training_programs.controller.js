@@ -2,7 +2,7 @@ const { PAGINATION } = require("../../utils");
 
 class TrainingProgramsController {
 
-  static async getTrainingPrograms(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, user_id, is_active }) {
+  static async getTrainingPrograms(connection, { limit = PAGINATION.DEFAULT_LIMIT, offset = PAGINATION.DEFAULT_OFFSET, user_id, is_active, search }) {
     try {
       let params = [limit, offset, user_id];
       let sql = `
@@ -41,6 +41,11 @@ class TrainingProgramsController {
         if(is_active) {
           params.push(is_active)
           sql += ` and tp.is_active = $${params.length} `
+        }
+
+        if(search) {
+          params.push(`%${search.toLowerCase()}%`)
+          sql += `and lower(tp.name) like $${params.length} or lower(tp.description) like $${params.length}`
         }
 
         sql += `
