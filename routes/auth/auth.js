@@ -24,7 +24,7 @@ router.post('/login', transaction (async (req, res, next) => {
       connection.query(`update users set last_login_on_tz = now() where user_id = $1`, [req.user.user_id])
 
       return res.json({
-				user: { user_id: req.user.user_id, username: req.user.username, display_name: user.display_name },
+				user: { user_id: req.user.user_id, username: req.user.username, display_name: req.user.display_name, email: req.user.email },
 				isAuth: true,
 			});
     });
@@ -55,7 +55,7 @@ router.post('/register', transaction (async (req, res) => {
     if (err) return res.status(500).json({ message: 'Ошибка аутентификации после регистрации' });
 
     res.json({
-      user: { user_id: req.user.user_id, username: req.user.username, display_name: user.display_name },
+      user: { user_id: req.user.user_id, username: req.user.username, display_name: user.display_name, email: user.email },
       isAuth: true,
     });
   });
