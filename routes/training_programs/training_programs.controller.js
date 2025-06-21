@@ -92,6 +92,52 @@ class TrainingProgramsController {
     }
   }
 
+  static async updateTrainingProgram(connection, { program_id, user_id, name, description, is_active, exercises }) {
+    try {
+      const updates = [];
+      const params = [program_id, user_id];
+
+      if(name) {
+        params.push(name)
+        updates.push(`name = $${params.length}`)
+      }
+
+      if(description) {
+        params.push(description)
+        updates.push(`description = $${params.length}`)
+      }
+
+      if(is_active !== undefined) {
+        params.push(is_active)
+        updates.push(`is_active = $${params.length}`)
+      }
+
+      // Обновляем данные о программе тренировок
+      if(updates.length) {
+        await connection.query(`update training_programs set ${updates.join(', ')} where program_id = $1 and user_id = $2`, params)
+      }
+
+      // Обновляем упражнения
+      if(exercises && exercises.length) {
+        await connection.query('delete from program_exercises where program_id = $1', [program_id])
+
+        for(const exercise of exercises) {
+          const { exercise_id, sets, reps } = exercise;
+
+          await connection.query(`
+            insert into program_exercises (program_id, exercise_id, sets, reps) 
+            values ($1, $2, $3, $4)`,
+            [program_id, exercise_id, sets, reps]
+          )
+        }
+      }
+
+
+    } catch (error) {
+        throw error;
+    }
+  }
+
 }
 
 module.exports = TrainingProgramsController;
