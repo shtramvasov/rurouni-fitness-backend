@@ -29,7 +29,7 @@ class UsersController {
     }
   }
 
-  static async updateUser(connection, userModel, { display_name, gender, old_password, new_password }) {
+  static async updateUser(connection, userModel, { display_name, gender, avatar_url, old_password, new_password }) {
     try {
       const updates = [];
       const params = [userModel.user_id];
@@ -61,6 +61,11 @@ class UsersController {
       if(gender) {
         params.push(gender)
         updates.push(`gender = $${params.length}`)
+      }
+
+      if(avatar_url) {
+        params.push(avatar_url)
+        updates.push(`avatar_url = $${params.length}`)
       }
 
       if(updates.length) {

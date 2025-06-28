@@ -7,10 +7,10 @@ const EMAIL_TEMPLATE = require('../../controllers/email.templates')
 
 // Обновление профиля пользователя
 router.put('/', transaction (async (req, res) => {
-  const { display_name, gender, old_password, new_password } = req.body;
+  const { display_name, gender, avatar_url, old_password, new_password } = req.body;
   const connection = res.locals.pg;
 
-  const user = await UsersController.updateUser(connection, req.user, { display_name, gender, old_password, new_password });
+  const user = await UsersController.updateUser(connection, req.user, { display_name, gender, avatar_url, old_password, new_password });
 
   if(old_password && new_password) {
     // Записываем в лог отправки почты

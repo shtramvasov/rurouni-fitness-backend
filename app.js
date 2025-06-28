@@ -39,7 +39,7 @@ app.use(passport.session());
 // routes
 app.use('/api/auth', authRouter);
 app.use('/api', authenticate, router);
-// app.use('/api', router);
+
 
 app.listen(API_PORT, () => {
 	console.log(`Server is listering on port: ${API_PORT}`);
