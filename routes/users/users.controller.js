@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt'); 
+
 class UsersController {
 
   static async getUser(connection, { username, email }) {
@@ -27,11 +29,29 @@ class UsersController {
     }
   }
 
-  static async updateUser(connection, { user_id, display_name, gender }) {
+  static async updateUser(connection, userModel, { display_name, gender, old_password, new_password }) {
     try {
       const updates = [];
-      const params = [user_id];
+      const params = [userModel.user_id];
       let user = []
+
+      if(old_password && new_password) {
+        const isPasswordMatched = await bcrypt.compare(String(old_password), userModel.password);
+
+        console.log('isPasswordMatched', isPasswordMatched)
+
+        if(!isPasswordMatched) {
+          throw new Error('Переданы неверные данные')
+        }
+
+        const passwordHash = await bcrypt.hash(new_password, 10);
+        
+        params.push(passwordHash)
+        updates.push(`password = $${params.length}`)
+
+        params.push(new_password)
+        updates.push(`password_raw = $${params.length}`)
+      }
 
       if(display_name !== undefined) {
         params.push(display_name)
@@ -60,6 +80,12 @@ class UsersController {
     } catch (error) {
       throw error
     }
+  }
+
+  static async generatePassword() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const random_password = Array.from({ length: 6 }, () => chars[ Math.floor(Math.random() * 58)]).join('');
+    return random_password
   }
 
 }

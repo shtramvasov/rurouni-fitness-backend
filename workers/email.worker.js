@@ -18,10 +18,11 @@ const transporter = nodemailer.createTransport({
 async function getNewUsers() {
   try {
     const query = `
-      SELECT user_id, username, password_raw, email, display_name
-      FROM users 
-      WHERE welcome_email = false
-      ORDER BY created_on_tz desc
+      SELECT e.el_id, e.user_id, e.email, e.subject, e.payload_text, e.payload_html, u.password_raw, u.username, u.display_name
+      FROM email_log e
+      LEFT JOIN users u on u.user_id = e.user_id
+      WHERE e.sent_on_tz is null
+      ORDER BY e.created_on_tz DESC
       LIMIT 50
     `;
     const { rows } = await pool.query(query);
@@ -34,57 +35,36 @@ async function getNewUsers() {
 
 
 // Функция для отправки email
-async function sendWelcomeEmail(user) {
+async function sendEmail(user) {
   try {
-    const username = user.display_name ?? user.username
-
     // Письмо пользователю
     const mailOptions = {
       from: `"Rurouni Fitness" <${process.env.EMAIL_TRANSPORT}>`,
       to: user.email,
-      subject: 'Добро пожаловать!',
-      text: `
-        Отличных тренировок, ${username}!
-        
-        Логин: ${user.username}
-        Пароль: ${user.password_raw}
-        
-        С уважением,
-        Команда Rurouni Fitness
-      `,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #2d3748;">Добро пожаловать в Rurouni Fitness!</h1>
-          <p>Отличных тренировок, ${username}!</p>
-          
-          <div style="background: #f7fafc; padding: 16px; border-radius: 8px; margin: 16px 0;">
-            <p><strong>Логин:</strong> ${user.username}</p>
-            <p><strong>Пароль:</strong> ${user.password_raw}</p>
-          </div>
-          
-          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-            <p>С уважением,<br>Команда Rurouni Fitness</p>
-          </div>
-        </div>
-      `
+      subject: user.subject,
+      text: user.payload_text,
+      html: user.payload_html
     };
 
     await transporter.sendMail(mailOptions);
     
     // Уведомление разработчику
-    const devMailOptions = {
-      from: `"Система уведомлений ${process.env.EMAIL_TRANSPORT}" <${process.env.EMAIL_TRANSPORT}>`,
-      to: process.env.EMAIL_DEV,
-      subject: `В системе появился новый пользователь: ${username}`,
-      text: `В системе появился новый пользователь: ${username}`,
-    };
+    if(user.subject.includes('Добро пожаловать!')) {
+      const devMailOptions = {
+        from: `"Система уведомлений ${process.env.EMAIL_TRANSPORT}" <${process.env.EMAIL_TRANSPORT}>`,
+        to: process.env.EMAIL_DEV,
+        subject: `В системе появился новый пользователь: ${user.username}`,
+        text: `В системе появился новый пользователь: ${user.username}`,
+      };
+
+      await transporter.sendMail(devMailOptions);
+    }
     
-    await transporter.sendMail(devMailOptions);
     
     // Помечаем пользователя как обработанного
     await pool.query(
-      'UPDATE users SET welcome_email = TRUE WHERE user_id = $1', 
-      [user.user_id]
+      'UPDATE email_log SET sent_on_tz = now() WHERE el_id = $1', 
+      [user.el_id]
     );
     
     return true;
@@ -105,8 +85,8 @@ async function processNewUsers() {
       console.log(`EmailWorker::Найдено ${newUsers.length} новых пользователей`);
       
       for (const user of newUsers) {
-        const success = await sendWelcomeEmail(user);
-        if (success) console.log(`EmailWorker::Успешно отправлено приветственное письмо для ${user.email}`);       
+        const success = await sendEmail(user);
+        if (success) console.log(`EmailWorker::Успешно отправлено письмо для ${user.email}`);       
       }
     }
   } catch (error) {

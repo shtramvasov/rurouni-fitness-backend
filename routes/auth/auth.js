@@ -5,7 +5,8 @@ const passport = require('../../middlewares/passport-strategy');
 const { connection, transaction } = require('../../middlewares/connection');
 const UsersController = require('../users/users.controller');
 const TrainingProgramsController = require('../training_programs/training_programs.controller');
-
+const EmailController = require('../../controllers/EmailController')
+const EMAIL_TEMPLATE = require('../../controllers/email.templates')
 
 router.post('/login', transaction (async (req, res, next) => {
   let { username, password } = req.body;
@@ -56,6 +57,17 @@ router.post('/register', transaction (async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10);
 
   const user = await UsersController.postUser(connection, { username, password, passwordHash, email, display_name });
+
+  // Записываем в лог отправки почты
+  const { welcome } = EMAIL_TEMPLATE;
+
+  await EmailController.createLog(connection, { 
+    user_id:        user.user_id, 
+    email:          user.email, 
+    subject:        welcome.subject,
+    payload_text:   welcome.text({...user, password_raw: password}), 
+    payload_html:   welcome.html({...user, password_raw: password})
+  })
 
   // #TODO: убрать после добавления фичи: Программы тренировок, пока что заполнять пресетом
   await TrainingProgramsController.postTrainingProgram(connection, { user_id: user.user_id }) 
