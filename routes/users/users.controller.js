@@ -27,6 +27,41 @@ class UsersController {
     }
   }
 
+  static async updateUser(connection, { user_id, display_name, gender }) {
+    try {
+      const updates = [];
+      const params = [user_id];
+      let user = []
+
+      if(display_name !== undefined) {
+        params.push(display_name)
+        updates.push(`display_name = $${params.length}`)
+      }
+
+      if(gender) {
+        params.push(gender)
+        updates.push(`gender = $${params.length}`)
+      }
+
+      if(updates.length) {
+        updates.push('updated_on_tz = NOW()');
+
+        user = (await connection.query(`
+          update users 
+          set ${updates.join(', ')} 
+          where user_id = $1
+          returning user_id, username, email, created_on_tz, updated_on_tz, last_login_on_tz, gender, avatar_url, display_name`, 
+          params
+        )).rows[0]
+      }
+
+      return user
+
+    } catch (error) {
+      throw error
+    }
+  }
+
 }
 
 module.exports = UsersController;
