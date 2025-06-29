@@ -27,6 +27,7 @@ class TelegramBot {
 
   setupHandlers() {
     this.bot.onText(/\/start/, (msg) => {
+      console.log(msg)
       this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
     });
 
