@@ -7,6 +7,7 @@ const authenticate = require('./middlewares/authenticate')
 const passport = require('./middlewares/passport-strategy');
 const router = require('./routes/index');
 const authRouter = require('./routes/auth/auth');
+const TelegramBot = require('./workers/telegram.bot');
 require('dotenv').config();
 
 const API_PORT = process.env.API_PORT || 9000;
@@ -35,6 +36,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+// Инициализация Telegram бота
+const telegramBot = new TelegramBot(app);
 
 // routes
 app.use('/api/auth', authRouter);
