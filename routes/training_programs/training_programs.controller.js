@@ -19,6 +19,7 @@ class TrainingProgramsController {
                 'name', e."name",
                 'muscle_group', e.muscle_group,
                 'unit', e.unit,
+                'image_url', e.image_url,
                 'recent_sets', recent.sets,
                 'recent_reps', recent.reps,
                 'recent_weight', recent.weight,

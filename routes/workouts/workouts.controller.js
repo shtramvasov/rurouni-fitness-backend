@@ -40,6 +40,7 @@ class WorkoutsController {
               'exercise_id', we.exercise_id,
               'muscle_group', e.muscle_group,
               'unit', e.unit,
+              'image_url', e.image_url,
               'sets', we."sets",
               'reps', we.reps,
               'weight', we.weight
