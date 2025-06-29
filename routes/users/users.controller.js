@@ -58,7 +58,7 @@ class UsersController {
         updates.push(`display_name = $${params.length}`)
       }
 
-      if(gender) {
+      if(gender !== undefined) {
         params.push(gender)
         updates.push(`gender = $${params.length}`)
       }
