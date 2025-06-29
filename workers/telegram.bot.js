@@ -13,7 +13,7 @@ class TelegramBot {
   }
 
   setupWebhook(app) {
-    const webhookUrl = `${process.env.HOSTNAME}/api/webhooks/telegram`;
+    const webhookUrl = `${process.env.HOSTNAME}api/webhooks/telegram`;
     this.bot.setWebHook(webhookUrl)
       .then(() => console.log(`Webhook установлен: ${webhookUrl}`))
       .catch(err => console.error('Ошибка настройки webhook'));
