@@ -99,6 +99,16 @@ class UsersController {
 
   }
 
+  static async getRecentLogins(connection, { user_id }) {
+    try {
+      const result = await connection.query('select * from logins_log where user_id = $1 order by login_id desc limit 5', [user_id])
+
+      return result.rows
+    } catch (error) {
+        throw error
+    }
+  }
+
   static async generatePassword() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const random_password = Array.from({ length: 6 }, () => chars[ Math.floor(Math.random() * 58)]).join('');

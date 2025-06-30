@@ -5,6 +5,17 @@ const UsersController = require('./users.controller');
 const EmailController = require('../../controllers/EmailController')
 const EMAIL_TEMPLATE = require('../../controllers/email.templates')
 
+
+// Получаем активность логинов пользователя
+router.get('/logins', connection (async (req, res) => {
+  const connection = res.locals.pg;
+
+  const recentLogins = await UsersController.getRecentLogins(connection, { user_id: req.user.user_id });
+
+  res.json(recentLogins);
+}));
+
+
 // Обновление профиля пользователя
 router.put('/', transaction (async (req, res) => {
   const { display_name, gender, avatar_url, old_password, new_password } = req.body;
