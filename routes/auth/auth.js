@@ -21,20 +21,14 @@ router.post('/login', transaction (async (req, res, next) => {
     if (err) return next(err);    
     if (!user) return res.status(401).json({ message: 'Неверный логин или пароль' });
 
-    req.login(user, (err) => {
+    req.login(user, async (err) => {
       if (err) return next(err);
 
-      connection.query(`update users set last_login_on_tz = now() where user_id = $1`, [req.user.user_id])
-
-
+      // Записываем лог о логине
+      const ipAddress = req.headers['x-forwarded-for']?.split(',')[0]
       const userAgent = parseUserAgent(req.headers['user-agent'])
 
-      console.log('req.ip', req.headers['x-forwarded-for']?.split(',')[0])
-      console.log('userAgent', userAgent)
-
-      // user-agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
-
-      // user-agent Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36
+      await UsersController.updateLastLogin(connection, { user_id: req.user.user_id, ip_address: ipAddress, user_agent: userAgent })
 
 
       return res.json({

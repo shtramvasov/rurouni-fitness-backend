@@ -38,8 +38,6 @@ class UsersController {
       if(old_password && new_password) {
         const isPasswordMatched = await bcrypt.compare(String(old_password), userModel.password);
 
-        console.log('isPasswordMatched', isPasswordMatched)
-
         if(!isPasswordMatched) {
           throw new Error('Переданы неверные данные')
         }
@@ -85,6 +83,20 @@ class UsersController {
     } catch (error) {
       throw error
     }
+  }
+
+  static async updateLastLogin(connection, { user_id, ip_address, user_agent }) {
+    try {
+      // Обновляем у юзера
+      await connection.query(`update users set last_login_on_tz = now() where user_id = $1`, [user_id])
+
+      // Записываем лог о логине
+      await connection.query(`insert into logins_log (user_id, ip_address, user_agent) values $1, $2, $3`, [user_id, ip_address, user_agent])
+      
+    } catch (error) {
+        throw error
+    }
+
   }
 
   static async generatePassword() {
