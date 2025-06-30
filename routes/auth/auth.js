@@ -24,6 +24,11 @@ router.post('/login', transaction (async (req, res, next) => {
 
       connection.query(`update users set last_login_on_tz = now() where user_id = $1`, [req.user.user_id])
 
+
+      console.log('req.ip', req.ip)
+      console.log('req.connection.remoteAddress', req.connection.remoteAddress)
+      console.log('user-agent', req.headers['user-agent'])
+
       return res.json({
 				user: { 
           user_id:            req.user.user_id,
