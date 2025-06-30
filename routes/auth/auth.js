@@ -32,6 +32,11 @@ router.post('/login', transaction (async (req, res, next) => {
       console.log('req.ip', req.headers['x-forwarded-for']?.split(',')[0])
       console.log('userAgent', userAgent)
 
+      // user-agent Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
+
+      // user-agent Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36
+
+
       return res.json({
 				user: { 
           user_id:            req.user.user_id,
