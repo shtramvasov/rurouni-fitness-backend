@@ -85,13 +85,13 @@ class UsersController {
     }
   }
 
-  static async updateLastLogin(connection, { user_id, ip_address, user_agent }) {
+  static async updateLastLogin(connection, { user_id, ip_address = 'dev', user_agent }) {
     try {
       // Обновляем у юзера
       await connection.query(`update users set last_login_on_tz = now() where user_id = $1`, [user_id])
 
       // Записываем лог о логине
-      await connection.query(`insert into logins_log (user_id, ip_address, user_agent) values $1, $2, $3`, [user_id, ip_address, user_agent])
+      await connection.query(`insert into logins_log (user_id, ip_address, user_agent) values ($1, $2, $3)`, [user_id, ip_address, user_agent])
       
     } catch (error) {
         throw error
