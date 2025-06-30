@@ -6,7 +6,9 @@ const { connection, transaction } = require('../../middlewares/connection');
 const UsersController = require('../users/users.controller');
 const TrainingProgramsController = require('../training_programs/training_programs.controller');
 const EmailController = require('../../controllers/EmailController')
-const EMAIL_TEMPLATE = require('../../controllers/email.templates')
+const EMAIL_TEMPLATE = require('../../controllers/email.templates');
+const { parseUserAgent } = require('../../utils/auth');
+
 
 router.post('/login', transaction (async (req, res, next) => {
   let { username, password } = req.body;
@@ -25,9 +27,10 @@ router.post('/login', transaction (async (req, res, next) => {
       connection.query(`update users set last_login_on_tz = now() where user_id = $1`, [req.user.user_id])
 
 
-      console.log('req.ip', req.ip)
-      console.log('req.connection.remoteAddress', req.connection.remoteAddress)
-      console.log('user-agent', req.headers['user-agent'])
+      const userAgent = parseUserAgent(req.headers['user-agent'])
+
+      console.log('req.ip', req.headers['x-forwarded-for']?.split(',')[0])
+      console.log('userAgent', userAgent)
 
       return res.json({
 				user: { 
