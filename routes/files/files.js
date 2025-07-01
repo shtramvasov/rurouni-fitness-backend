@@ -20,12 +20,11 @@ router.post('/', upload.single('avatar'), async (req, res) => {
       .upload(fileName, file.buffer, { contentType: file.mimetype, upsert: false })
     ;
 
-    if(error) {
-      console.log(error)
+    if (error) {
+      console.log('error', error)
       console.log('file', file)
-    }
-
-    if (error) return res.status(500).json({ message: `Ошибка загрузки файла: ${error.message}`  });
+      return res.status(500).json({ message: `Ошибка загрузки файла: ${error.message}`  });
+    } 
 
     // Получаем публичную ссылку
     const { data: { publicUrl } } = supabase.storage
