@@ -17,10 +17,10 @@ router.post('/', upload.single('avatar'), async (req, res) => {
     // Загружаем на FS
     const { error } = await supabase.storage
       .from('rurouni-fs')
-      .upload(fileName, file.buffer, { contentType: file.mimetype, upsert: true})
+      .upload(fileName, file.buffer, { contentType: file.mimetype, upsert: false })
     ;
 
-    if (error) return res.status(500).json({ message: 'Ошибка загрузки файла' });
+    if (error) return res.status(500).json({ message: `Ошибка загрузки файла: ${error.message}`  });
 
     // Получаем публичную ссылку
     const { data: { publicUrl } } = supabase.storage
