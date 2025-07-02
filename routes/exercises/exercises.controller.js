@@ -27,7 +27,7 @@ class ExercisesController {
         params.push(mapMuscleGroup(order).toLowerCase())
         sql += ` order by case when lower(e.muscle_group) = $${params.length} THEN 0 ELSE 1 END, last_trained_on_tz desc nulls last`
       } else {
-        sql += ` order by last_trained_on_tz desc nulls last`
+        sql += ` order by last_trained_on_tz desc nulls last, name `
       }
 
       sql += ` limit $1 offset $2 `
