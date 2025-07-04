@@ -3,7 +3,8 @@ const router = express.Router();
 const { connection, transaction } = require('../../middlewares/connection');
 const UsersController = require('./users.controller');
 const EmailController = require('../../controllers/EmailController')
-const EMAIL_TEMPLATE = require('../../controllers/email.templates')
+const UserSettingsController = require('../../controllers/UserSettingsController');
+const EMAIL_TEMPLATE = require('../../controllers/email.templates');
 
 
 // Получаем активность логинов пользователя
@@ -59,6 +60,17 @@ router.post('/reset-password', transaction (async (req, res) => {
   })
 
   res.json({ random_password })
+}));
+
+
+// Обновить настройки пользователя
+router.put('/settings', transaction (async (req, res) => {
+  const { news_updates, personal_statistics, workout_reminders, security_alerts } = req.body;
+  const connection = res.locals.pg;
+
+  await UserSettingsController.updateUserSettings(connection, req.user, { news_updates, personal_statistics, workout_reminders, security_alerts })
+
+  res.json({ ok: true })
 }));
 
 module.exports = router;

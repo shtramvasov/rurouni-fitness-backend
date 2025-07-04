@@ -30,7 +30,6 @@ router.post('/login', transaction (async (req, res, next) => {
 
       await UsersController.updateLastLogin(connection, { user_id: req.user.user_id, ip_address: ipAddress, user_agent: userAgent })
 
-
       return res.json({
 				user: { 
           user_id:            req.user.user_id,
@@ -42,6 +41,12 @@ router.post('/login', transaction (async (req, res, next) => {
           updated_on_tz:      req.user.updated_on_tz,
           last_login_on_tz:   req.user.last_login_on_tz,
           gender:             req.user.gender,
+          settings: {
+            email_news_updates:           req.user.email_news_updates,
+            email_personal_statistics:    req.user.email_personal_statistics,
+            telegram_workout_reminders:   req.user.telegram_workout_reminders,
+            telegram_security_alerts:     req.user.telegram_security_alerts,
+          }
         },
 				isAuth: true,
 			});
@@ -94,6 +99,12 @@ router.post('/register', transaction (async (req, res) => {
         updated_on_tz:      user.updated_on_tz,
         last_login_on_tz:   user.last_login_on_tz,
         gender:             user.gender,
+        settings: {
+          email_news_updates:           req.user.email_news_updates,
+          email_personal_statistics:    req.user.email_personal_statistics,
+          telegram_workout_reminders:   req.user.telegram_workout_reminders,
+          telegram_security_alerts:     req.user.telegram_security_alerts,
+        }
       },
       isAuth: true,
     });
@@ -109,7 +120,14 @@ router.post('/logout', (req, res) => {
 
 router.get('/status', connection (async (req, res) => {
   if(req.isAuthenticated()) {  
-    const { user_id, username, email, created_on_tz, last_login_on_tz, gender, avatar_url, display_name } = req.user;
+    const { 
+      user_id, username, email, 
+      created_on_tz, last_login_on_tz, 
+      gender, avatar_url, display_name, 
+      email_news_updates, email_personal_statistics, telegram_workout_reminders, telegram_security_alerts
+    } = req.user;
+
+    console.log(req.user)
     
     return res.json({
       isAuth: true,
@@ -121,7 +139,13 @@ router.get('/status', connection (async (req, res) => {
         last_login_on_tz,
         gender,
         avatar_url,
-        display_name
+        display_name,
+        settings: {
+          email_news_updates,
+          email_personal_statistics,
+          telegram_workout_reminders,
+          telegram_security_alerts,
+        }
       }
     })
   }

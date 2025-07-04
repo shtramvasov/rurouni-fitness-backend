@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt'); 
+const UserSettingsController = require('../../controllers/UserSettingsController');
 
 class UsersController {
 
@@ -22,6 +23,9 @@ class UsersController {
         returning user_id, username, display_name, email`,
         [username, passwordHash, password, email, display_name]
       );
+
+      // Инициализиуем настройки
+      await UserSettingsController.createUserSettings(connection, { user_id: user.rows[0].user_id })
 
       return user.rows[0]
     } catch (error) {
