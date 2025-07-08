@@ -1,5 +1,6 @@
 const TelegramBotApi = require('node-telegram-bot-api');
 const path = require('path');
+const fetch = require('node-fetch');
 require('dotenv').config({ path: path.join(__dirname, '../.env') })
 
 class TelegramBot {
