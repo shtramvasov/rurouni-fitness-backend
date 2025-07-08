@@ -5,8 +5,8 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') })
 class TelegramBot {
   constructor(app) {
     // Инициализация бота с webhook
-    this.app = app; 
     this.bot = new TelegramBotApi(process.env.TELEGRAM_BOT_TOKEN);
+    this.webhook_url = `${process.env.HOSTNAME}api/webhooks/telegram`
     
     // Настройка вебхука
     this.setupWebhook(app);
@@ -14,9 +14,8 @@ class TelegramBot {
   }
 
   setupWebhook(app) {
-    const webhookUrl = `${process.env.HOSTNAME}api/webhooks/telegram`;
-    this.bot.setWebHook(webhookUrl)
-      .then(() => console.log(`Webhook установлен: ${webhookUrl}`))
+    this.bot.setWebHook(this.webhook_url)
+      .then(() => console.log(`Webhook установлен: ${this.webhook_url}`))
       .catch(err => console.error('Ошибка настройки webhook'));
 
     // Обработчик вебхука
@@ -27,12 +26,14 @@ class TelegramBot {
   }
 
   setupHandlers() {
-    this.bot.onText(/\/verify/, (msg) => {
+    this.bot.onText(/\/verify/, async (msg) => {
     
-      this.app.post('/api/webhooks/telegram/verify', (req, res) => {
-      this.bot.processUpdate(req.body);
-      res.sendStatus(200);
-      });
+    await fetch(`${this.webhook_url}/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(msg)
+    })
+
       // this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
     });
 
