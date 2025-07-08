@@ -103,11 +103,8 @@ const EMAIL_TEMPLATE = {
     text: (user) => `
       Уважаемый ${user.display_name || user.username},
 
-      Чтобы привязать ваш Telegram к аккаунту Rurouni Fitness, используйте следующий код подтверждения:
+      Чтобы привязать ваш Telegram к аккаунту Rurouni Fitness, введите в Telegram-боте следующую команду
 
-      Ваш код: ${user.token}
-
-      Пожалуйста, введите в Telegram-боте команду:
       /verify ${user.token}
 
       Если вы не запрашивали привязку, проигнорируйте это письмо или свяжитесь с поддержкой.
@@ -119,19 +116,13 @@ const EMAIL_TEMPLATE = {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #2d3748;">Подтверждение Telegram</h1>
         <p>Уважаемый ${user.display_name || user.username},</p>
-        <p>Чтобы привязать ваш Telegram к аккаунту Rurouni Fitness, используйте следующий код подтверждения:</p>
+        <p>Чтобы привязать ваш Telegram к аккаунту Rurouni Fitness, введите в Telegram-боте следующую команду</p>
         
         <div style="background: #f7fafc; padding: 16px; border-radius: 8px; margin: 16px 0;">
           <h3 style="margin-top: 0; color: #2d3748;">Ваш код подтверждения:</h3>
           <div style="font-size: 24px; font-weight: bold; text-align: center; padding: 10px; background: #ffffff; border-radius: 4px;">
-            ${user.token}
+            /verify ${user.token}
           </div>
-        </div>
-
-        <p style="margin-bottom: 0;">Введите в Telegram-боте следующую команду, чтобы завершить процесс привязки:</p>
-        
-        <div style="background: #edf2f7; padding: 12px; border-radius: 4px; margin: 12px 0; font-size: 16px; font-weight: bold; text-align: center;">
-          /verify ${user.token}
         </div>
 
         <div style="background: #fff5f5; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #fc8181;">
