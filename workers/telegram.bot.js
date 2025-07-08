@@ -31,7 +31,7 @@ class TelegramBot {
       console.log('/verify')
     
       app.post('/api/webhooks/telegram/verify', (req, res) => {
-        this.bot.processUpdate(msg);
+        this.bot.processUpdate(req);
         res.sendStatus(200);
       });
 
