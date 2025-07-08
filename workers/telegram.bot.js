@@ -36,8 +36,8 @@ class TelegramBot {
         body: { chat_id: msg.chat_id, username: msg.from.username } 
       }
 
-      this.app._router.handle(req, res, (err) => {
-        if (err) console.error('Ошибка:');
+      this.app._router.handle(req, (err) => {
+        if (err) console.error('Ошибка в роуте /verify');
       });
     
       // app.post('/api/webhooks/telegram/verify', (req, res) => {
