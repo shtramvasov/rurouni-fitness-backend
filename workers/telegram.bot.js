@@ -52,7 +52,13 @@ class TelegramBot {
         );
 
         await client.query('COMMIT');
+        await this.bot.sendMessage(msg.from.id, 
+          `✅ Ваш Telegram аккаунт успешно привязан!\n\n` +
+          `Обновите страницу в браузере, чтобы увидеть изменения.`
+        );
+        
         console.log(`Телеграм успешно привязан для пользователя ${msg.from.username}`)
+
       } catch (error) {
           console.log('error', error)
           await client.query('ROLLBACK');
