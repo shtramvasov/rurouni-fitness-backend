@@ -1,6 +1,6 @@
 const TelegramBotApi = require('node-telegram-bot-api');
 const path = require('path');
-const fetch = require('node-fetch');
+const axios = require('axios'); 
 require('dotenv').config({ path: path.join(__dirname, '../.env') })
 
 class TelegramBot {
@@ -31,13 +31,9 @@ class TelegramBot {
 
       console.log('/verify')
     
-    const resp = await fetch(`${this.webhook_url}/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(msg)
-    })
+     const resp = await axios.post(`${this.webhook_url}/verify`,msg );
 
-    console.log('resp')
+    console.log('resp', resp)
 
       // this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
     });
