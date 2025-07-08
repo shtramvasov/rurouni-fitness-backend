@@ -34,6 +34,10 @@ class TelegramBot {
         method: 'POST',
         url: `${this.webhook_url}/verify`,
         body: { chat_id: msg.chat_id, username: msg.from.username },
+        headers: { 'content-type': 'application/json' },
+        connection: {},
+        socket: {},
+        res: { end: () => {} }
       }
 
       const res = {
@@ -43,7 +47,7 @@ class TelegramBot {
     };
 
       this.app._router.handle(req, res, (err) => {
-        if (err) console.error('Ошибка в роуте /verify');
+        if (err) console.error('Ошибка в роуте /verify', err);
       });
     
       // app.post('/api/webhooks/telegram/verify', (req, res) => {
