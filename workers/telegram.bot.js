@@ -27,13 +27,22 @@ class TelegramBot {
 
   setupHandlers(app) {
     this.bot.onText(/\/verify/, async (msg) => {
+      console.log(`Получена команда /verify от пользователя ${msg.from.username}`);
 
-      console.log('/verify')
-    
-      app.post('/api/webhooks/telegram/verify', (req, res) => {
-        this.bot.processUpdate(req);
-        res.sendStatus(200);
+      const req = { 
+        method: 'POST',
+        url: `${this.webhook_url}/verify`,
+        body: { chat_id: msg.chat_id, username: msg.from.username } 
+      }
+
+      this.app._router.handle(req, res, (err) => {
+        if (err) console.error('Ошибка:');
       });
+    
+      // app.post('/api/webhooks/telegram/verify', (req, res) => {
+      //   this.bot.processUpdate(req);
+      //   res.sendStatus(200);
+      // });
 
       // this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
     });
