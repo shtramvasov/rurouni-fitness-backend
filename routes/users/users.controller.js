@@ -37,7 +37,6 @@ class UsersController {
     try {
       const updates = [];
       const params = [userModel.user_id];
-      let user = []
 
       if(old_password && new_password) {
         const isPasswordMatched = await bcrypt.compare(String(old_password), userModel.password);
@@ -73,20 +72,47 @@ class UsersController {
       if(updates.length) {
         updates.push('updated_on_tz = NOW()');
 
-        user = (await connection.query(`
-          update users 
-          set ${updates.join(', ')} 
-          where user_id = $1
-          returning user_id, username, email, created_on_tz, updated_on_tz, last_login_on_tz, gender, avatar_url, display_name`, 
-          params
-        )).rows[0]
+        await connection.query(`update users set ${updates.join(', ')} where user_id = $1`, params)
       }
+
+      const user = await this.getUser(connection, { user_id: userModel.user_id })
 
       return user
 
     } catch (error) {
       throw error
     }
+  }
+
+  static async getUser(connection, { user_id }) {
+    const userData = (await connection.query(`
+      select u.*, us.* 
+      from users u 
+      left join user_settings us on u.user_id = us.user_id 
+      where u.user_id = $1`, 
+      [user_id]
+    )).rows[0];
+
+
+    if(!userData) throw new Error('Пользователь не найден')
+
+    return {
+        user_id:            userData.user_id,
+        username:           userData.username,
+        display_name:       userData.display_name,
+        email:              userData.email,
+        avatar_url:         userData.avatar_url,
+        created_on_tz:      userData.created_on_tz,
+        updated_on_tz:      userData.updated_on_tz,
+        last_login_on_tz:   userData.last_login_on_tz,
+        gender:             userData.gender,
+        settings: {
+            email_news_updates:         userData.email_news_updates,
+            email_personal_statistics:  userData.email_personal_statistics,
+            telegram_workout_reminders: userData.telegram_workout_reminders,
+            telegram_security_alerts:   userData.telegram_security_alerts
+        }
+    };
   }
 
   static async updateLastLogin(connection, { user_id, ip_address = 'dev', user_agent }) {

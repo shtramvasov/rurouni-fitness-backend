@@ -126,8 +126,6 @@ router.get('/status', connection (async (req, res) => {
       gender, avatar_url, display_name, 
       email_news_updates, email_personal_statistics, telegram_workout_reminders, telegram_security_alerts
     } = req.user;
-
-    console.log(req.user)
     
     return res.json({
       isAuth: true,
