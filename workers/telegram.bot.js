@@ -31,11 +31,10 @@ class TelegramBot {
     this.bot.onText(/\/verify (.+)/, async (msg, token) => {
       console.log(`Получена команда /verify от пользователя ${msg.from.username}`);
     
-      if(!token) {
-        console.log('нет токена', token)
+      if(!token[1]) {
+        console.log('Нет токена', token)
+        return;
       };
-
-      console.log('token', token[0], token[1])
 
       // Начинаем транзакцию
       const client = await pool.connect();
@@ -45,12 +44,14 @@ class TelegramBot {
       try {
         await client.query('BEGIN');
 
-        const user = await client.query(`select * from users where telegram = $1`, ['re12'])
+        const userData = (await client.query(`select user_id from users where telegram = $1`, [token[1]])).rows[0]
 
-        console.log('user', user)
-
-
-
+        if(!userData) throw new Error('Пользователь не найден')
+          
+        await client.query(
+          `UPDATE users SET telegram = $2, telegram_id = $3 WHERE user_id = $1`,
+          [userData.user_id, msg.from.username, msg.from.id]
+        );
 
         await client.query('COMMIT');
       } catch (error) {
@@ -59,8 +60,6 @@ class TelegramBot {
       } finally {
           client.release();
       }
-
-
 
     });
 
