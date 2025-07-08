@@ -34,11 +34,15 @@ class TelegramBot {
         method: 'POST',
         url: `${this.webhook_url}/verify`,
         body: { chat_id: msg.chat_id, username: msg.from.username },
-        connection: {},
-        headers: {}
       }
 
-      this.app._router.handle(req, { end: () => {} }, (err) => {
+      const res = {
+      json: () => {},
+      status: () => res,
+      sendStatus: () => {}
+    };
+
+      this.app._router.handle(req, res, (err) => {
         if (err) console.error('Ошибка в роуте /verify');
       });
     
