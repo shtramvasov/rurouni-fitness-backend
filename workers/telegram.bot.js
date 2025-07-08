@@ -38,23 +38,26 @@ class TelegramBot {
       console.log('token', token[0], token[1])
 
       // Начинаем транзакцию
-      
-      try {
-        await pool.connect();
-        await pool.query('BEGIN');
+      const client = await pool.connect();
 
-        const user = await pool.query(`select * from users where telegram = re12`)
+      console.log('client', client)
+
+      try {
+        await client.query('BEGIN');
+
+        const user = await client.query(`select * from users where telegram = re12`)
 
         console.log('user', user)
 
 
 
 
-        await pool.query('COMMIT');
+        await client.query('COMMIT');
       } catch (error) {
-          await pool.query('ROLLBACK');
+          console.log('error', error)
+          await client.query('ROLLBACK');
       } finally {
-          pool.release();
+          client.release();
       }
 
 
