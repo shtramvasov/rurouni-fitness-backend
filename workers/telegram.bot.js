@@ -45,7 +45,7 @@ class TelegramBot {
       try {
         await client.query('BEGIN');
 
-        const user = await client.query(`select * from users where telegram = re12`)
+        const user = await client.query(`select * from users where telegram = $1`, ['re12'])
 
         console.log('user', user)
 
