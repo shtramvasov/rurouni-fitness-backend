@@ -31,9 +31,11 @@ class TelegramBot {
     this.bot.onText(/\/verify (.+)/, async (msg, token) => {
       console.log(`Получена команда /verify от пользователя ${msg.from.username}`);
     
-      if(!token[1]) {
-        console.log('нет токена', token[1])
+      if(!token) {
+        console.log('нет токена', token)
       };
+
+      console.log('token', token[0], token[1])
 
       // Начинаем транзакцию
       const client = await pool.connect();
