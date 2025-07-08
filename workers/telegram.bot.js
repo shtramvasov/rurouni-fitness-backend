@@ -1,6 +1,7 @@
 const TelegramBotApi = require('node-telegram-bot-api');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') })
+const pool = require('../db-connection');
 
 class TelegramBot {
   constructor(app) {
@@ -29,17 +30,31 @@ class TelegramBot {
   setupHandlers() {
     this.bot.onText(/\/verify (.+)/, async (msg, token) => {
       console.log(`Получена команда /verify от пользователя ${msg.from.username}`);
-
-      console.log('token', token)
-
-
     
-      // app.post('/api/webhooks/telegram/verify', (req, res) => {
-      //   this.bot.processUpdate(req);
-      //   res.sendStatus(200);
-      // });
+      if(!token[0]) return;
 
-      // this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
+      // Начинаем транзакцию
+      const client = await pool.connect();
+
+      try {
+        await client.query('BEGIN');
+
+        const user = await client.query(`select * from users where telegram = re12`)
+
+        console.log('user', user)
+
+
+
+
+        await client.query('COMMIT');
+      } catch (error) {
+          await client.query('ROLLBACK');
+      } finally {
+          client.release();
+      }
+
+
+
     });
 
     this.bot.on('polling_error', (error) => {
