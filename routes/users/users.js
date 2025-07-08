@@ -5,6 +5,7 @@ const UsersController = require('./users.controller');
 const EmailController = require('../../controllers/EmailController')
 const UserSettingsController = require('../../controllers/UserSettingsController');
 const EMAIL_TEMPLATE = require('../../controllers/email.templates');
+const TELEGRAM_TEMPLATE = require('../../controllers/telegram.templates');
 
 
 // Получаем активность логинов пользователя
@@ -35,6 +36,13 @@ router.put('/', transaction (async (req, res) => {
       payload_text:   changePassword.text({...user, password_raw: new_password}), 
       payload_html:   changePassword.html({...user, password_raw: new_password})
     })
+
+    // Также оповещаем в телеграм, если пользователь включил в настройках
+    if(req.user.telegram_id && req.user.telegram_security_alerts) {
+      const { changePassword } = TELEGRAM_TEMPLATE;
+
+      global.telegramBot.bot.sendMessage(req.user.telegram_id, changePassword(req), { parse_mode: 'markdown' })
+    }
   }
 
   res.json(user);
@@ -58,6 +66,13 @@ router.post('/reset-password', transaction (async (req, res) => {
     payload_text:   resetPassword.text({...req.user, password_raw: random_password}), 
     payload_html:   resetPassword.html({...req.user, password_raw: random_password})
   })
+
+  // Также оповещаем в телеграм, если пользователь включил в настройках
+  if(req.user.telegram_id && req.user.telegram_security_alerts) {
+    const { resetPassword } = TELEGRAM_TEMPLATE;
+
+    global.telegramBot.bot.sendMessage(req.user.telegram_id, resetPassword(req), { parse_mode: 'markdown' })
+  }
 
   res.json({ random_password })
 }));
