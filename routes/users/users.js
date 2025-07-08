@@ -63,6 +63,30 @@ router.post('/reset-password', transaction (async (req, res) => {
 }));
 
 
+// Подтвердить (email или telegram)
+router.get('/verify', connection (async (req, res) => {
+  const connection = res.locals.pg;
+  const { method } = req.query
+
+  const token = await UsersController.generatePassword();
+
+  const telegram = (await UsersController.verifyTelegram(connection, { user_id: req.user.user_id, token })).rows[0]
+
+  // Записываем в лог отправки почты
+  const { verifyTelegram } = EMAIL_TEMPLATE;
+
+  await EmailController.createLog(connection, { 
+    user_id:        req.user.user_id, 
+    email:          req.user.email, 
+    subject:        verifyTelegram.subject,
+    payload_text:   verifyTelegram.text({...req.user, token: telegram}), 
+    payload_html:   verifyTelegram.html({...req.user, token: telegram})
+  }) 
+
+  res.json({ ok: true });
+}));
+
+
 // Обновить настройки пользователя
 router.put('/settings', transaction (async (req, res) => {
   const { news_updates, personal_statistics, workout_reminders, security_alerts } = req.body;

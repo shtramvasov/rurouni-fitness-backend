@@ -36,9 +36,6 @@ class TelegramBot {
         return;
       };
 
-      console.log('token[1]', token[1])
-      console.log('token[0]', token[0])
-
       // Начинаем транзакцию
       const client = await pool.connect();
 
@@ -62,7 +59,6 @@ class TelegramBot {
       } finally {
           client.release();
       }
-
     });
 
     this.bot.on('polling_error', (error) => {

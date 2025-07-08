@@ -139,6 +139,16 @@ class UsersController {
     }
   }
 
+  static async verifyTelegram(connection, { user_id, token }) {
+    try {
+      const result = await connection.query('update users set telegram = $2 where user_id = $1 returnin telegram', [user_id, token])
+
+      return result.rows[0]
+    } catch (error) {
+        throw error
+    }
+  }
+
   static async generatePassword() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const random_password = Array.from({ length: 6 }, () => chars[ Math.floor(Math.random() * 58)]).join('');

@@ -97,6 +97,52 @@ const EMAIL_TEMPLATE = {
         </div>
       </div>
     `
+  },
+  verifyTelegram: {
+    subject: 'Подтверждение Telegram',
+    text: (user) => `
+      Уважаемый ${user.display_name || user.username},
+
+      Чтобы привязать ваш Telegram к аккаунту Rurouni Fitness, используйте следующий код подтверждения:
+
+      Ваш код: ${user.token}
+
+      Пожалуйста, введите в Telegram-боте команду:
+      /verify ${user.token}
+
+      Если вы не запрашивали привязку, проигнорируйте это письмо или свяжитесь с поддержкой.
+
+      С уважением,
+      Команда Rurouni Fitness
+    `,
+    html: (user) => `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #2d3748;">Подтверждение Telegram</h1>
+        <p>Уважаемый ${user.display_name || user.username},</p>
+        <p>Чтобы привязать ваш Telegram к аккаунту Rurouni Fitness, используйте следующий код подтверждения:</p>
+        
+        <div style="background: #f7fafc; padding: 16px; border-radius: 8px; margin: 16px 0;">
+          <h3 style="margin-top: 0; color: #2d3748;">Ваш код подтверждения:</h3>
+          <div style="font-size: 24px; font-weight: bold; text-align: center; padding: 10px; background: #ffffff; border-radius: 4px;">
+            ${user.token}
+          </div>
+        </div>
+
+        <p style="margin-bottom: 0;">Введите в Telegram-боте следующую команду, чтобы завершить процесс привязки:</p>
+        
+        <div style="background: #edf2f7; padding: 12px; border-radius: 4px; margin: 12px 0; font-size: 16px; font-weight: bold; text-align: center;">
+          /verify ${user.token}
+        </div>
+
+        <div style="background: #fff5f5; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #fc8181;">
+          <p style="margin: 0; color: #e53e3e;">Если вы не запрашивали привязку Telegram, проигнорируйте это письмо или свяжитесь с поддержкой.</p>
+        </div>
+        
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+          <p>С уважением,<br>Команда Rurouni Fitness</p>
+        </div>
+      </div>
+    `
   }
 }
 
