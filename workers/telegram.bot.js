@@ -10,7 +10,7 @@ class TelegramBot {
     
     // Настройка вебхука
     this.setupWebhook(app);
-    this.setupHandlers();
+    this.setupHandlers(app);
   }
 
   setupWebhook(app) {
@@ -25,7 +25,7 @@ class TelegramBot {
     });
   }
 
-  setupHandlers() {
+  setupHandlers(app) {
     this.bot.onText(/\/verify/, async (msg) => {
 
       console.log('/verify')
