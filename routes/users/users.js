@@ -70,7 +70,7 @@ router.get('/verify', connection (async (req, res) => {
 
   const token = await UsersController.generatePassword();
 
-  const telegram = (await UsersController.verifyTelegram(connection, { user_id: req.user.user_id, token })).rows[0]
+  await UsersController.verifyTelegram(connection, { user_id: req.user.user_id, token })
 
   // Записываем в лог отправки почты
   const { verifyTelegram } = EMAIL_TEMPLATE;
@@ -79,8 +79,8 @@ router.get('/verify', connection (async (req, res) => {
     user_id:        req.user.user_id, 
     email:          req.user.email, 
     subject:        verifyTelegram.subject,
-    payload_text:   verifyTelegram.text({...req.user, token: telegram}), 
-    payload_html:   verifyTelegram.html({...req.user, token: telegram})
+    payload_text:   verifyTelegram.text({...req.user, token}), 
+    payload_html:   verifyTelegram.html({...req.user, token})
   }) 
 
   res.json({ ok: true });
