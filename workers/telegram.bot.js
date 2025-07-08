@@ -1,6 +1,5 @@
 const TelegramBotApi = require('node-telegram-bot-api');
 const path = require('path');
-const axios = require('axios'); 
 require('dotenv').config({ path: path.join(__dirname, '../.env') })
 
 class TelegramBot {
@@ -31,9 +30,10 @@ class TelegramBot {
 
       console.log('/verify')
     
-     const resp = await axios.post(`${this.webhook_url}/verify`,msg );
-
-    console.log('resp', resp)
+      this.app.post('/api/webhooks/telegram/verify', (req, res) => {
+        this.bot.processUpdate(req.body);
+        res.sendStatus(200);
+      });
 
       // this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
     });
