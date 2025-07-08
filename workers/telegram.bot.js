@@ -1,14 +1,11 @@
+// workers/telegram.bot.js
 const TelegramBotApi = require('node-telegram-bot-api');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') })
+require('dotenv').config();
 
 class TelegramBot {
   constructor(app) {
-    // Инициализация бота с webhook
     this.bot = new TelegramBotApi(process.env.TELEGRAM_BOT_TOKEN);
-    
-    // Настройка вебхука
-    this.setupWebhook(app);
+    this.setupWebhook(app);   
     this.setupHandlers();
   }
 
@@ -17,23 +14,30 @@ class TelegramBot {
     this.bot.setWebHook(webhookUrl)
       .then(() => console.log(`Webhook установлен: ${webhookUrl}`))
       .catch(err => console.error('Ошибка настройки webhook'));
-
-    // Обработчик вебхука
-    app.post('/api/webhooks/telegram', (req, res) => {
-      this.bot.processUpdate(req.body);
-      res.sendStatus(200);
-    });
   }
 
   setupHandlers() {
-    this.bot.onText(/\/start/, (msg) => {
-      console.log(msg)
-      this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
+    this.bot.onText(/\/verify/, (msg) => {
+      const chat_id= msg.chat.id;
+      const username = msg.from.username;
+      
+      // 1. Отправляем ответ пользователю
+      this.bot.sendMessage(
+        chat_id,
+        `✅ Ваш Telegram аккаунт @${username} получен!\nID чата: ${chat_id}`
+      );
     });
+  }
 
-    this.bot.on('polling_error', (error) => {
-      console.error('Polling error:');
-    });
+
+
+  async sendMessage(chat_id, text) {
+    if(!chat_id || !text) {
+      console.log('TelegramBot:: Невозможно отправить сообщение, отсутствуют параметры')
+      return
+    }
+
+    this.bot.sendMessage(chat_id, text)
   }
 }
 

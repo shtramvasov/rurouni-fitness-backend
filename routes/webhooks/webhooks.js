@@ -9,4 +9,21 @@ router.post('/telegram', (req, res) => {
   res.sendStatus(200);
 });
 
+
+// Подтверждение телеграм аккаунта
+router.post('/telegram/verify',connection, async (req, res) => {
+
+  const { chat_id } = req.body
+
+
+
+  // await global.telegramBot.sendMessage(
+  //     5094624456, 
+  //     `Ваш код: ${123}\n\nКод действителен 5 минут.`
+  //   );
+
+  res.json({ chat_id: chat_id });
+    
+});
+
 module.exports = router;

@@ -38,7 +38,7 @@ app.use(passport.session());
 
 
 // Инициализация Telegram бота
-const telegramBot = new TelegramBot(app);
+global.telegramBot = new TelegramBot(app);
 
 // routes
 app.use('/api/auth', authRouter);
