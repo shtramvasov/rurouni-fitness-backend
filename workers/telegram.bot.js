@@ -36,10 +36,11 @@ class TelegramBot {
         return;
       };
 
+      console.log('token[1]', token[1])
+      console.log('token[0]', token[0])
+
       // Начинаем транзакцию
       const client = await pool.connect();
-
-      console.log('client', client)
 
       try {
         await client.query('BEGIN');
@@ -54,6 +55,7 @@ class TelegramBot {
         );
 
         await client.query('COMMIT');
+        console.log(`Телеграм успешно привязан для пользователя ${msg.from.username}`)
       } catch (error) {
           console.log('error', error)
           await client.query('ROLLBACK');
