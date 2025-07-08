@@ -27,12 +27,16 @@ class TelegramBot {
 
   setupHandlers() {
     this.bot.onText(/\/verify/, async (msg) => {
+
+      console.log('/verify')
     
-    await fetch(`${this.webhook_url}/verify`, {
+    const resp = await fetch(`${this.webhook_url}/verify`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(msg)
     })
+
+    console.log('resp')
 
       // this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
     });
