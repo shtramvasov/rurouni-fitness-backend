@@ -29,10 +29,6 @@ class TelegramBot {
     this.bot.onText(/\/verify/, async (msg) => {
 
       console.log('/verify')
-      console.log('app', app)
-      console.log('this app', this.app)
-
-      return;
     
       app.post('/api/webhooks/telegram/verify', (req, res) => {
         this.bot.processUpdate(msg);

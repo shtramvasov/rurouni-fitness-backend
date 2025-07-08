@@ -14,7 +14,7 @@ router.post('/telegram/verify',connection, async (req, res) => {
 
   const { chat_id } = req.body
 
-  console.log('/telegram/verify', chat_id)
+  console.log('/telegram/verify', req.body)
 
   // await global.telegramBot.sendMessage(
   //     5094624456, 
