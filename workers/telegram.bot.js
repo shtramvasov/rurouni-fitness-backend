@@ -20,6 +20,8 @@ class TelegramBot {
     this.bot.onText(/\/verify/, (msg) => {
       const chat_id= msg.chat.id;
       const username = msg.from.username;
+
+      console.log('bot verify')
       
       // 1. Отправляем ответ пользователю
       this.bot.sendMessage(
@@ -28,8 +30,6 @@ class TelegramBot {
       );
     });
   }
-
-
 
   async sendMessage(chat_id, text) {
     if(!chat_id || !text) {
