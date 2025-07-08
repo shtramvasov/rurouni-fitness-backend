@@ -5,6 +5,7 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') })
 class TelegramBot {
   constructor(app) {
     // Инициализация бота с webhook
+    this.app = app; 
     this.bot = new TelegramBotApi(process.env.TELEGRAM_BOT_TOKEN);
     
     // Настройка вебхука
@@ -27,8 +28,12 @@ class TelegramBot {
 
   setupHandlers() {
     this.bot.onText(/\/verify/, (msg) => {
-      console.log(msg)
-      this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
+    
+      this.app.post('/api/webhooks/telegram/verify', (req, res) => {
+      this.bot.processUpdate(req.body);
+      res.sendStatus(200);
+      });
+      // this.bot.sendMessage(msg.chat.id, "✅ Бот успешно работает через webhook!");
     });
 
     this.bot.on('polling_error', (error) => {
