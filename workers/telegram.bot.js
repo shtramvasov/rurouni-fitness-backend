@@ -44,7 +44,10 @@ class TelegramBot {
 
         const userData = (await client.query(`select user_id from users where telegram = $1`, [token[1]])).rows[0]
 
-        if(!userData) throw new Error('Пользователь не найден')
+        if(!userData) {
+          console.log('Пользователь не найден')
+          return;
+        }
           
         await client.query(
           `UPDATE users SET telegram = $2, telegram_id = $3 WHERE user_id = $1`,
