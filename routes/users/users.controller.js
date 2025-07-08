@@ -141,7 +141,7 @@ class UsersController {
 
   static async verifyTelegram(connection, { user_id, token }) {
     try {
-      const result = await connection.query('update users set telegram = $2 where user_id = $1 returnin telegram', [user_id, token])
+      const result = await connection.query('update users set telegram = $2 where user_id = $1 returning telegram', [user_id, token])
 
       return result.rows[0]
     } catch (error) {
