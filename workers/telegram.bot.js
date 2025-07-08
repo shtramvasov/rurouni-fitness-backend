@@ -36,7 +36,7 @@ class TelegramBot {
         body: { chat_id: msg.chat_id, username: msg.from.username } 
       }
 
-      this.app._router.handle(req, (err) => {
+      this.app._router.handle(req, res = {}, (err) => {
         if (err) console.error('Ошибка в роуте /verify');
       });
     
