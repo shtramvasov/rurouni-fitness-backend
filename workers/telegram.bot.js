@@ -5,6 +5,7 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') })
 class TelegramBot {
   constructor(app) {
     // Инициализация бота с webhook
+    this.app = app;
     this.bot = new TelegramBotApi(process.env.TELEGRAM_BOT_TOKEN);
     this.webhook_url = `${process.env.HOSTNAME}api/webhooks/telegram`
     
@@ -25,7 +26,7 @@ class TelegramBot {
     });
   }
 
-  setupHandlers(app) {
+  setupHandlers() {
     this.bot.onText(/\/verify/, async (msg) => {
       console.log(`Получена команда /verify от пользователя ${msg.from.username}`);
 
