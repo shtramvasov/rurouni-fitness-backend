@@ -41,6 +41,8 @@ router.post('/login', transaction (async (req, res, next) => {
           updated_on_tz:      req.user.updated_on_tz,
           last_login_on_tz:   req.user.last_login_on_tz,
           gender:             req.user.gender,
+          telegram:           req.user.telegram,
+          telegram_id:        req.user.telegram_id,
           settings: {
             email_news_updates:           req.user.email_news_updates,
             email_personal_statistics:    req.user.email_personal_statistics,
@@ -99,6 +101,8 @@ router.post('/register', transaction (async (req, res) => {
         updated_on_tz:      user.updated_on_tz,
         last_login_on_tz:   user.last_login_on_tz,
         gender:             user.gender,
+        telegram:           user.telegram,
+          telegram_id:      user.telegram_id,
         settings: {
           email_news_updates:           req.user.email_news_updates,
           email_personal_statistics:    req.user.email_personal_statistics,
@@ -121,7 +125,7 @@ router.post('/logout', (req, res) => {
 router.get('/status', connection (async (req, res) => {
   if(req.isAuthenticated()) {  
     const { 
-      user_id, username, email, 
+      user_id, username, email, telegram, telegram_id,
       created_on_tz, last_login_on_tz, 
       gender, avatar_url, display_name, 
       email_news_updates, email_personal_statistics, telegram_workout_reminders, telegram_security_alerts
@@ -138,6 +142,8 @@ router.get('/status', connection (async (req, res) => {
         gender,
         avatar_url,
         display_name,
+        telegram,
+        telegram_id,
         settings: {
           email_news_updates,
           email_personal_statistics,

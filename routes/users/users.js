@@ -68,6 +68,8 @@ router.get('/verify', connection (async (req, res) => {
   const connection = res.locals.pg;
   const { method } = req.query
 
+  if(req.user.telegram_id) return res.status(400).json({ message: 'Аккаунт уже поддвержден' });
+
   const token = await UsersController.generatePassword();
 
   await UsersController.verifyTelegram(connection, { user_id: req.user.user_id, token })

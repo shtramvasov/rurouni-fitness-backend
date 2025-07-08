@@ -20,7 +20,7 @@ class UsersController {
     try {
       const user = await connection.query(`
         insert into users (username, password, password_raw, email, display_name, created_on_tz) values ($1, $2, $3, $4, $5, now())
-        returning user_id, username, display_name, email`,
+        returning user_id, username, display_name, email, telegram, telegram_id`,
         [username, passwordHash, password, email, display_name]
       );
 
@@ -106,6 +106,8 @@ class UsersController {
         updated_on_tz:      userData.updated_on_tz,
         last_login_on_tz:   userData.last_login_on_tz,
         gender:             userData.gender,
+        telegram:           userData.telegram,
+        telegram_id:        userData.telegram_id,
         settings: {
             email_news_updates:         userData.email_news_updates,
             email_personal_statistics:  userData.email_personal_statistics,
