@@ -75,7 +75,7 @@ class UsersController {
         await connection.query(`update users set ${updates.join(', ')} where user_id = $1`, params)
       }
 
-      const user = await this.getUser(connection, { user_id: userModel.user_id })
+      const user = await this.getUserDetails(connection, { user_id: userModel.user_id })
 
       return user
 
@@ -84,7 +84,7 @@ class UsersController {
     }
   }
 
-  static async getUser(connection, { user_id }) {
+  static async getUserDetails(connection, { user_id }) {
     const userData = (await connection.query(`
       select u.*, us.* 
       from users u 
