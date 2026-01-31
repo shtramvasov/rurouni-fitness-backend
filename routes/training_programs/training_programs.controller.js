@@ -16,6 +16,8 @@ class TrainingProgramsController {
                 'exercise_id', e.exercise_id,
                 'sets', pe."sets",
                 'reps', pe.reps,
+                'exercise_order', pe.exercise_order,
+                'room', pe.room,
                 'name', e."name",
                 'muscle_group', e.muscle_group,
                 'unit', e.unit,
@@ -123,12 +125,12 @@ class TrainingProgramsController {
         await connection.query('delete from program_exercises where program_id = $1', [program_id])
 
         for(const exercise of exercises) {
-          const { exercise_id, sets, reps } = exercise;
+          const { exercise_id, sets, reps, exercise_order, room } = exercise;
 
           await connection.query(`
-            insert into program_exercises (program_id, exercise_id, sets, reps) 
-            values ($1, $2, $3, $4)`,
-            [program_id, exercise_id, sets, reps]
+            insert into program_exercises (program_id, exercise_id, sets, reps, exercise_order, room) 
+            values ($1, $2, $3, $4, $5, $6)`,
+            [program_id, exercise_id, sets, reps, exercise_order, room]
           )
         }
       }
