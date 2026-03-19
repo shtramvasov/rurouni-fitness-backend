@@ -33,7 +33,7 @@ class UsersController {
     }
   }
 
-  static async updateUser(connection, userModel, { display_name, gender, avatar_url, old_password, new_password }) {
+  static async updateUser(connection, userModel, { display_name, gender, daily_calories, avatar_url, old_password, new_password }) {
     try {
       const updates = [];
       const params = [userModel.user_id];
@@ -62,6 +62,11 @@ class UsersController {
       if(gender !== undefined) {
         params.push(gender)
         updates.push(`gender = $${params.length}`)
+      }
+
+      if(daily_calories !== undefined) {
+        params.push(daily_calories)
+        updates.push(`daily_calories = $${params.length}`)
       }
 
       if(avatar_url) {
@@ -101,6 +106,7 @@ class UsersController {
         username:           userData.username,
         display_name:       userData.display_name,
         email:              userData.email,
+        daily_calories:     userData.daily_calories,
         avatar_url:         userData.avatar_url,
         created_on_tz:      userData.created_on_tz,
         updated_on_tz:      userData.updated_on_tz,

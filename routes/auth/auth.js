@@ -36,6 +36,7 @@ router.post('/login', transaction (async (req, res, next) => {
           username:           req.user.username, 
           display_name:       req.user.display_name, 
           email:              req.user.email,
+          daily_calories:     req.user.daily_calories,
           avatar_url:         req.user.avatar_url,
           created_on_tz:      req.user.created_on_tz,
           updated_on_tz:      req.user.updated_on_tz,
@@ -95,6 +96,7 @@ router.post('/register', transaction (async (req, res) => {
         user_id:            req.user.user_id, 
         username:           req.user.username, 
         display_name:       user.display_name, 
+        daily_calories:     user.daily_calories,
         email:              user.email,
         avatar_url:         user.avatar_url,
         created_on_tz:      user.created_on_tz,
@@ -102,7 +104,7 @@ router.post('/register', transaction (async (req, res) => {
         last_login_on_tz:   user.last_login_on_tz,
         gender:             user.gender,
         telegram:           user.telegram,
-          telegram_id:      user.telegram_id,
+        telegram_id:      user.telegram_id,
         settings: {
           email_news_updates:           req.user.email_news_updates,
           email_personal_statistics:    req.user.email_personal_statistics,
@@ -127,7 +129,7 @@ router.get('/status', connection (async (req, res) => {
     const { 
       user_id, username, email, telegram, telegram_id,
       created_on_tz, last_login_on_tz, 
-      gender, avatar_url, display_name, 
+      gender, avatar_url, display_name, daily_calories,
       email_news_updates, email_personal_statistics, telegram_workout_reminders, telegram_security_alerts
     } = req.user;
     
@@ -141,6 +143,7 @@ router.get('/status', connection (async (req, res) => {
         last_login_on_tz,
         gender,
         avatar_url,
+        daily_calories,
         display_name,
         telegram,
         telegram_id,
